@@ -14,7 +14,6 @@ public class WaymarkController {
     private Connections connections;
 
 
-
     WaymarkController(SimpMessagingTemplate simpMessagingTemplate, SimpUserRegistry simpUserRegistry, Connections connections) {
         this.template = simpMessagingTemplate;
         this.simpUserRegistry = simpUserRegistry;
@@ -22,13 +21,19 @@ public class WaymarkController {
     }
 
     @RequestMapping(value = "/place", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public String test(@RequestBody String body, HttpServletRequest request) {
-        template.convertAndSend( "/broadcast/waymark", new BroadcastMessage(request.getRemoteAddr(), body) );
+    public String broadcastWaymark(@RequestBody String body, HttpServletRequest request) {
+        template.convertAndSend("/broadcast/waymark", new BroadcastMessage(request.getRemoteAddr(), body));
         return body;
     }
 
     @GetMapping("/onlineCount")
     public Integer getOnlineCount() {
         return connections.getCount();
+    }
+
+
+    @PostMapping("/tts")
+    public void broadcaskTts(@RequestBody String body) {
+        template.convertAndSend("/broadcast/tts", body);
     }
 }

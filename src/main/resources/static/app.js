@@ -1,5 +1,23 @@
 var stompClient = null;
 
+function setOnlineCount(message) {
+    $("#online-count").text(message)
+}
+
+function updateOnlineCount() {
+    $.get("/onlineCount", function (count) {
+        $("#online-count").text(count)
+    })
+}
+
+function tts(text) {
+    window.speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+}
+
+function ttsTest() {
+    tts('吃瓜');
+}
+
 function connect() {
     var socket = new SockJS('/websocket');
     stompClient = Stomp.over(socket);
@@ -26,17 +44,10 @@ function connect() {
         stompClient.subscribe('/broadcast/onlineCount', function (message) {
             setOnlineCount(JSON.parse(message.body));
         });
+        stompClient.subscribe('/broadcast/tts', function (message) {
+            tts(message.body);
+        });
     });
-}
-
-function setOnlineCount(message) {
-    $("#online-count").text(message)
-}
-
-function updateOnlineCount() {
-    $.get("/onlineCount", function (count) {
-        $("#online-count").text(count)
-    })
 }
 
 $(function () {
